@@ -35,13 +35,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Applications/{applicationSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Application>(response);
+            return this.ReturnOrThrowException<Application>(response.Result);
         }
 
         /// <summary>
@@ -72,15 +72,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Applications.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Applications.json");
 
             // Add ListApplications query and body parameters
             this.SetParamsForListApplications(request, friendlyName, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<ApplicationsList>(response);
+            return this.ReturnOrThrowException<ApplicationsList>(response.Result);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Applications.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Applications.json");
 
             // Add CreateApplication query and body parameters
             this.SetParamsForCreateOrUpdateApplication(request, friendlyName, voiceUrl, voiceMethod, voiceFallbackUrl,
@@ -143,9 +143,9 @@ namespace AvayaCPaaS.Connectors
                 hearbeatMethod, statusCallback, statusCallbackMethod, hangupCallback, hangupCallbackMethod);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Application>(response);
+            return this.ReturnOrThrowException<Application>(response.Result);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Applications/{applicationSid}.json");
 
             // Add UpdateApplication query and body parameters
@@ -233,9 +233,9 @@ namespace AvayaCPaaS.Connectors
                 hearbeatMethod, statusCallback, statusCallbackMethod, hangupCallback, hangupCallbackMethod);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Application>(response);
+            return this.ReturnOrThrowException<Application>(response.Result);
         }
 
         /// <summary>
@@ -290,13 +290,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/Applications/{applicationSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Application>(response);
+            return this.ReturnOrThrowException<Application>(response.Result);
         }
 
         /// <summary>
@@ -332,27 +332,27 @@ namespace AvayaCPaaS.Connectors
         /// <param name="statusCallbackMethod">The status callback method.</param>
         /// <param name="hangupCallback">The hangup callback.</param>
         /// <param name="hangupCallbackMethod">The hangup callback method.</param>
-        private void SetParamsForCreateOrUpdateApplication(IRestRequest request, string friendlyName, string voiceUrl,
+        private void SetParamsForCreateOrUpdateApplication(RestRequest request, string friendlyName, string voiceUrl,
             HttpMethod voiceMethod, string voiceFallbackUrl, HttpMethod voiceFallbackMethod, bool voiceCallerIdLookup, string smsUrl,
             HttpMethod smsMethod, string smsFallbackUrl, HttpMethod smsFallbackMethod, string hearbeatUrl,
             HttpMethod hearbeatMethod, string statusCallback, HttpMethod statusCallbackMethod, string hangupCallback,
             HttpMethod hangupCallbackMethod)
         {
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
-            if (voiceUrl.HasValue()) request.AddParameter("VoiceUrl", voiceUrl);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(voiceUrl)) request.AddParameter("VoiceUrl", voiceUrl);
             request.AddParameter("VoiceMethod", voiceMethod.ToString().ToUpper());
-            if (voiceFallbackUrl.HasValue()) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
+            if (string.IsNullOrEmpty(voiceFallbackUrl)) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
             request.AddParameter("VoiceFallbackMethod", voiceFallbackMethod.ToString().ToUpper());
             request.AddParameter("VoiceCallerIdLookup", voiceCallerIdLookup.ToString());
-            if (smsUrl.HasValue()) request.AddParameter("SmsUrl", smsUrl);
+            if (string.IsNullOrEmpty(smsUrl)) request.AddParameter("SmsUrl", smsUrl);
             request.AddParameter("SmsMethod", smsMethod.ToString().ToUpper());
-            if (smsFallbackUrl.HasValue()) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
+            if (string.IsNullOrEmpty(smsFallbackUrl)) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
             request.AddParameter("SmsFallbackMethod", smsFallbackMethod.ToString().ToUpper());
-            if (hearbeatUrl.HasValue()) request.AddParameter("HeartbeatUrl", hearbeatUrl);
+            if (string.IsNullOrEmpty(hearbeatUrl)) request.AddParameter("HeartbeatUrl", hearbeatUrl);
             request.AddParameter("HeartbeatMethod", hearbeatMethod.ToString().ToUpper());
-            if (statusCallback.HasValue()) request.AddParameter("StatusCallback", statusCallback);
+            if (string.IsNullOrEmpty(statusCallback)) request.AddParameter("StatusCallback", statusCallback);
             request.AddParameter("StatusCallbackMethod", statusCallbackMethod.ToString().ToUpper());
-            if (hangupCallback.HasValue()) request.AddParameter("HangupCallback", hangupCallback);
+            if (string.IsNullOrEmpty(hangupCallback)) request.AddParameter("HangupCallback", hangupCallback);
             request.AddParameter("HangupCallbackMethod", hangupCallbackMethod.ToString().ToUpper());
         }
 
@@ -363,9 +363,9 @@ namespace AvayaCPaaS.Connectors
         /// <param name="friendlyName">Name of the friendly.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListApplications(IRestRequest request, string friendlyName, int? page, int? pageSize)
+        private void SetParamsForListApplications(RestRequest request, string friendlyName, int? page, int? pageSize)
         {
-            if (friendlyName.HasValue()) request.AddQueryParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddQueryParameter("FriendlyName", friendlyName);
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());
         }

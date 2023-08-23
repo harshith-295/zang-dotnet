@@ -1,6 +1,4 @@
 ﻿using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -36,13 +34,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}/Credentials/{credentialSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Credential>(response);
+            return this.ReturnOrThrowException<Credential>(response.Result);
         }
 
         /// <summary>
@@ -71,13 +69,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}/Credentials.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialsList>(response);
+            return this.ReturnOrThrowException<CredentialsList>(response.Result);
         }
 
         /// <summary>
@@ -107,20 +105,20 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}/Credentials.json");
 
             // Mark obligatory parameters
-            Require.Argument("Username", username);
-            Require.Argument("Password", password);
+            //Require.Argument("Username", username);
+            //Require.Argument("Password", password);
 
             // Add CreateCredential query and body parameters
             this.SetParamsForCreateCredential(request, username, password);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Credential>(response);
+            return this.ReturnOrThrowException<Credential>(response.Result);
         }
 
         /// <summary>
@@ -152,19 +150,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}/Credentials/{credentialSid}.json");
 
             // Mark obligatory parameters
-            Require.Argument("Password", password);
+            //Require.Argument("Password", password);
 
             // Add UpdateCredential query and body parameters
             request.AddParameter("Password", password);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Credential>(response);
+            return this.ReturnOrThrowException<Credential>(response.Result);
         }
 
         /// <summary>
@@ -195,13 +193,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}/Credentials/{credentialSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Credential>(response);
+            return this.ReturnOrThrowException<Credential>(response.Result);
         }
 
         /// <summary>
@@ -230,13 +228,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -263,13 +261,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/CredentialLists.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialListsList>(response);
+            return this.ReturnOrThrowException<CredentialListsList>(response.Result);
         }
 
         /// <summary>
@@ -296,19 +294,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/CredentialLists.json");
 
             // Mark obligatory parameters
-            Require.Argument("FriendlyName", friendlyName);
+            //Require.Argument("FriendlyName", friendlyName);
 
             // Add CreateCredential query and body parameters
             request.AddParameter("FriendlyName", friendlyName);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -337,15 +335,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}.json");
 
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -374,13 +372,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/CredentialLists/{clSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -402,7 +400,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="username">The username.</param>
         /// <param name="password">The password.</param>
-        private void SetParamsForCreateCredential(IRestRequest request, string username, string password)
+        private void SetParamsForCreateCredential(RestRequest request, string username, string password)
         {
             request.AddParameter("Username", username);
             request.AddParameter("Password", password);

@@ -46,7 +46,7 @@ namespace AvayaCPaaS.Connectors
             var typeString = EnumHelper.GetEnumValue(type);
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/AvailablePhoneNumbers/{country}/{typeString}.json");
 
             // Add ListAvailableNumbers query and body parameters
@@ -54,9 +54,9 @@ namespace AvayaCPaaS.Connectors
                 pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<AvailablePhoneNumbersList>(response);
+            return this.ReturnOrThrowException<AvailablePhoneNumbersList>(response.Result);
         }
 
         /// <summary>
@@ -92,13 +92,13 @@ namespace AvayaCPaaS.Connectors
         /// <param name="inPostalCode">The in postal code.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListAvailablePhoneNumbers(IRestRequest request, string contains, string areaCode,
+        private void SetParamsForListAvailablePhoneNumbers(RestRequest request, string contains, string areaCode,
             string inRegion, string inPostalCode, int? page, int? pageSize)
         {
-            if (contains.HasValue()) request.AddQueryParameter("Contains", contains);
-            if (areaCode.HasValue()) request.AddQueryParameter("AreaCode", areaCode);
-            if (inRegion.HasValue()) request.AddQueryParameter("InRegion", inRegion);
-            if (inPostalCode.HasValue()) request.AddQueryParameter("InPostalCode", inPostalCode);
+            if (string.IsNullOrEmpty(contains)) request.AddQueryParameter("Contains", contains);
+            if (string.IsNullOrEmpty(areaCode)) request.AddQueryParameter("AreaCode", areaCode);
+            if (string.IsNullOrEmpty(inRegion)) request.AddQueryParameter("InRegion", inRegion);
+            if (string.IsNullOrEmpty(inPostalCode)) request.AddQueryParameter("InPostalCode", inPostalCode);
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());
         }

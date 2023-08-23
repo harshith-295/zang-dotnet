@@ -1,7 +1,5 @@
 ﻿using System;
 using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -37,12 +35,12 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Calls/{callSid}.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Calls/{callSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -78,15 +76,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Calls.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Calls.json");
 
             // Add ListCalls query and body parameters
             this.SetParamsForListCalls(request, to, from, status, startTimeGte, startTimeLt, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CallsList>(response);
+            return this.ReturnOrThrowException<CallsList>(response.Result);
         }
 
         /// <summary>
@@ -152,15 +150,15 @@ namespace AvayaCPaaS.Connectors
             string sipAuthPassword = null)
         {
             // Mark obligatory parameters
-            Require.Argument("To", to);
-            Require.Argument("From", from);
-            Require.Argument("Url", url);
+            //Require.Argument("To", to);
+            //Require.Argument("From", from);
+            //Require.Argument("Url", url);
 
             // Get client to make request
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Calls.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Calls.json");
 
             // Add MakeCall query and body parameters
             this.SetParamsForMakeCall(request, to, from, url, method, fallbackUrl, fallbackMethod, statusCallback,
@@ -170,9 +168,9 @@ namespace AvayaCPaaS.Connectors
                 straightToVoicemail, ifMachine, ifMachineUrl, ifMachineMethod, sipAuthUsername, sipAuthPassword);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -241,15 +239,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Calls/{callSid}.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Calls/{callSid}.json");
 
             // Add InterruptLiveCall query and body parameters
             this.SetParamsForInterruptLiveCall(request, url, method, status);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -284,15 +282,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Calls/{callSid}.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Calls/{callSid}.json");
 
             // Add SendDigitsToLiveCall query and body parameters
             this.SetParamsForSendDigitsToLiveCall(request, playDtmf, playDtmfDirection);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -336,10 +334,10 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Mark obligatory parameters
-            Require.Argument("Record", record);
+            //Require.Argument("Record", record);
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Calls/{callSid}/Recordings.json");
 
             // Add RecordLiveCall query and body parameters
@@ -348,9 +346,9 @@ namespace AvayaCPaaS.Connectors
                 transcribeQuality, transcribeCallback);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -397,19 +395,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Mark obligatory parameters
-            Require.Argument("AudioUrl", audioUrl);
+            //Require.Argument("AudioUrl", audioUrl);
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Calls/{callSid}/Play.json");
 
             // Add PlayAudioToLiveCall query and body parameters
             this.SetParamsForPlayAudioToLiveCall(request, audioUrl, direction, loop);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -448,16 +446,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Calls/{callSid}/Effect.json");
 
             // Add ApplyVoiceEffect query and body parameters
             this.SetParamsForApplyVoiceEffect(request, direction, pitch, pitchSemiTones, pitchOctaves, rate, tempo);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Call>(response);
+            return this.ReturnOrThrowException<Call>(response.Result);
         }
 
         /// <summary>
@@ -510,7 +508,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="straightToVoicemail">if set to <c>true</c> [straight to voicemail].</param>
         /// <param name="ifMachine">If machine.</param>
         /// <param name="ifMachineMethod">If machine method.</param>
-        private void SetParamsForMakeCall(IRestRequest request, string to, string from, string url, HttpMethod method,
+        private void SetParamsForMakeCall(RestRequest request, string to, string from, string url, HttpMethod method,
             string fallbackUrl, HttpMethod fallbackMethod,
             string statusCallback, HttpMethod statusCallbackMethod, string heartbeatUrl, HttpMethod heartbeatMethod,
             string forwardedFrom, string playDtmf,
@@ -524,45 +522,45 @@ namespace AvayaCPaaS.Connectors
             request.AddParameter("Url", url);
 
             request.AddParameter("Method", method);
-            if (fallbackUrl.HasValue())
+            if (string.IsNullOrEmpty(fallbackUrl))
             {
                 request.AddParameter("FallbackUrl", fallbackUrl);
                 request.AddParameter("FallbackMethod", fallbackMethod.ToString().ToUpper());
             }
-            if (statusCallback.HasValue())
+            if (string.IsNullOrEmpty(statusCallback))
             {
                 request.AddParameter("StatusCallback", statusCallback);
                 request.AddParameter("StatusCallbackMethod", statusCallbackMethod.ToString().ToUpper());
             }
-            if (heartbeatUrl.HasValue())
+            if (string.IsNullOrEmpty(heartbeatUrl))
             {
                 request.AddParameter("HeartbeatUrl", heartbeatUrl);
                 request.AddParameter("HeartbeatMethod", heartbeatMethod.ToString().ToUpper());
             }
-            if (forwardedFrom.HasValue()) request.AddParameter("ForwardedFrom", forwardedFrom);
-            if (playDtmf.HasValue()) request.AddParameter("PlayDtmf", playDtmf);
+            if (string.IsNullOrEmpty(forwardedFrom)) request.AddParameter("ForwardedFrom", forwardedFrom);
+            if (string.IsNullOrEmpty(playDtmf)) request.AddParameter("PlayDtmf", playDtmf);
             request.AddParameter("Timeout", timeout);
             request.AddParameter("HideCallerId", hideCallerId);
             request.AddParameter("Record", record);
-            if (recordCallback.HasValue())
+            if (string.IsNullOrEmpty(recordCallback))
             {
                 request.AddParameter("RecordCallback", recordCallback);
                 request.AddParameter("RecordCallbackMethod", recordCallbackMethod.ToString().ToUpper());
             }
             request.AddParameter("Transcribe", transcribe);
-            if (transcribeCallback.HasValue()) request.AddParameter("TranscribeCallback", transcribeCallback);
+            if (string.IsNullOrEmpty(transcribeCallback)) request.AddParameter("TranscribeCallback", transcribeCallback);
             request.AddParameter("StraightToVoicemail", straightToVoicemail);
             if (ifMachine != null)
             {
                 request.AddParameter("IfMachine", EnumHelper.GetEnumValue(ifMachine));
-                if (ifMachineUrl.HasValue())
+                if (string.IsNullOrEmpty(ifMachineUrl))
                 {
                     request.AddParameter("IfMachineUrl", ifMachineUrl);
                     request.AddParameter("IfMachineMethod", ifMachineMethod.ToString().ToUpper());
                 }
             }
-            if (sipAuthUsername.HasValue()) request.AddParameter("SipAuthUsername", sipAuthUsername);
-            if (sipAuthPassword.HasValue()) request.AddParameter("SipAuthPassword", sipAuthPassword);
+            if (string.IsNullOrEmpty(sipAuthUsername)) request.AddParameter("SipAuthUsername", sipAuthUsername);
+            if (string.IsNullOrEmpty(sipAuthPassword)) request.AddParameter("SipAuthPassword", sipAuthPassword);
         }
 
         /// <summary>
@@ -576,11 +574,11 @@ namespace AvayaCPaaS.Connectors
         /// <param name="startTimeLt">The start time lt.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListCalls(IRestRequest request, string to, string from, CallStatus? status,
+        private void SetParamsForListCalls(RestRequest request, string to, string from, CallStatus? status,
             DateTime startTimeGte, DateTime startTimeLt, int? page, int? pageSize)
         {
-            if (to.HasValue()) request.AddQueryParameter("To", to);
-            if (from.HasValue()) request.AddQueryParameter("From", from);
+            if (string.IsNullOrEmpty(to)) request.AddQueryParameter("To", to);
+            if (string.IsNullOrEmpty(from)) request.AddQueryParameter("From", from);
             if (status != null)
                 request.AddQueryParameter("Status", EnumHelper.GetEnumValue(status));
             if (startTimeGte != default(DateTime))
@@ -598,10 +596,10 @@ namespace AvayaCPaaS.Connectors
         /// <param name="url">The URL.</param>
         /// <param name="method">The method.</param>
         /// <param name="status">The status.</param>
-        private void SetParamsForInterruptLiveCall(IRestRequest request, string url, HttpMethod method,
+        private void SetParamsForInterruptLiveCall(RestRequest request, string url, HttpMethod method,
             CallStatus? status)
         {
-            if (url.HasValue()) request.AddParameter("Url", url);
+            if (string.IsNullOrEmpty(url)) request.AddParameter("Url", url);
             request.AddParameter("Method", method.ToString().ToUpper());
             if (status != null) request.AddParameter("Status", EnumHelper.GetEnumValue(status));
         }
@@ -612,10 +610,10 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="playDtmf">The play DTMF.</param>
         /// <param name="playDtmfDirection">The play DTMF direction.</param>
-        private void SetParamsForSendDigitsToLiveCall(IRestRequest request, string playDtmf,
+        private void SetParamsForSendDigitsToLiveCall(RestRequest request, string playDtmf,
             AudioDirection? playDtmfDirection)
         {
-            if (playDtmf.HasValue()) request.AddParameter("PlayDtmf", playDtmf);
+            if (string.IsNullOrEmpty(playDtmf)) request.AddParameter("PlayDtmf", playDtmf);
             if (playDtmfDirection != null)
                 request.AddParameter("PlayDtmfDirection", EnumHelper.GetEnumValue(playDtmfDirection));
         }
@@ -633,7 +631,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="transcribe">if set to <c>true</c> [transcribe].</param>
         /// <param name="transcribeQuality">The transcribe quality.</param>
         /// <param name="transcribeCallback">The transcribe callback.</param>
-        private void SetParamsForRecordLiveCall(IRestRequest request, bool record, RecordingAudioDirection direction,
+        private void SetParamsForRecordLiveCall(RestRequest request, bool record, RecordingAudioDirection direction,
             int? timeLimit,
             string callbackUrl, RecordingFileFormat fileFormat, bool trimSilence, bool transcribe,
             TranscribeQuality transcribeQuality, string transcribeCallback)
@@ -641,12 +639,12 @@ namespace AvayaCPaaS.Connectors
             request.AddParameter("Record", record);
             request.AddParameter("Direction", EnumHelper.GetEnumValue(direction));
             if (timeLimit != null) request.AddParameter("TimeLimit", timeLimit.ToString());
-            if (callbackUrl.HasValue()) request.AddParameter("CallbackUrl", callbackUrl);
+            if (string.IsNullOrEmpty(callbackUrl)) request.AddParameter("CallbackUrl", callbackUrl);
             request.AddParameter("FileFormat", EnumHelper.GetEnumValue(fileFormat));
             request.AddParameter("TrimSilence", trimSilence);
             request.AddParameter("Transcribe", transcribe);
             request.AddParameter("TranscribeQuality", EnumHelper.GetEnumValue(transcribeQuality));
-            if (transcribeCallback.HasValue()) request.AddParameter("TranscribeCallback", transcribeCallback);
+            if (string.IsNullOrEmpty(transcribeCallback)) request.AddParameter("TranscribeCallback", transcribeCallback);
         }
 
         /// <summary>
@@ -656,7 +654,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="audioUrl">The audio URL.</param>
         /// <param name="direction">The direction.</param>
         /// <param name="loop">if set to <c>true</c> [loop].</param>
-        private void SetParamsForPlayAudioToLiveCall(IRestRequest request, string audioUrl,
+        private void SetParamsForPlayAudioToLiveCall(RestRequest request, string audioUrl,
             RecordingAudioDirection direction, bool loop)
         {
             request.AddParameter("AudioUrl", audioUrl);
@@ -674,22 +672,22 @@ namespace AvayaCPaaS.Connectors
         /// <param name="pitchOctaves">The pitch octaves.</param>
         /// <param name="rate">The rate.</param>
         /// <param name="tempo">The tempo.</param>
-        private void SetParamsForApplyVoiceEffect(IRestRequest request, AudioDirection? direction = null,
+        private void SetParamsForApplyVoiceEffect(RestRequest request, AudioDirection? direction = null,
             float? pitch = null, float? pitchSemiTones = null,
             float? pitchOctaves = null, float? rate = null, float? tempo = null)
         {
             if (direction != null)
               request.AddParameter("AudioDirection", EnumHelper.GetEnumValue(direction));
             if (pitch != null)
-              request.AddParameter("Pitch", pitch);
+              request.AddParameter("Pitch", pitch.ToString());
             if (pitchSemiTones != null)
-              request.AddParameter("PitchSemiTones", pitchSemiTones);
+              request.AddParameter("PitchSemiTones", pitchSemiTones.ToString());
             if (pitchOctaves != null)
-              request.AddParameter("PitchOctaves", pitchOctaves);
+              request.AddParameter("PitchOctaves", pitchOctaves.ToString());
             if (rate != null)
-              request.AddParameter("Rate", rate);
+              request.AddParameter("Rate", rate.ToString());
             if (tempo != null)
-              request.AddParameter("Tempo", tempo);
+              request.AddParameter("Tempo", tempo.ToString());
         }
     }
 }

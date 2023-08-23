@@ -16,7 +16,7 @@ namespace AvayaCPaaS.Helpers
         public static RestRequest CreateRestRequest(Method method, string url)
         {
             // Create {method} request
-            var request = new RestRequest(method);
+            var request = new RestRequest(url, method);
 
             // Set url
             request.Resource = url;

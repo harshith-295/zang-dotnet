@@ -1,7 +1,5 @@
 ﻿using System;
 using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -37,13 +35,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Recordings/{recordingSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Recording>(response);
+            return this.ReturnOrThrowException<Recording>(response.Result);
         }
 
         /// <summary>
@@ -77,15 +75,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Recordings.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Recordings.json");
 
             // Add ListRecordings query and body parameters
             this.SetParamsForListRecordings(request, callSid, dateCreatedGte, dateCreatedLt, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<RecordingsList>(response);
+            return this.ReturnOrThrowException<RecordingsList>(response.Result);
         }
 
         /// <summary>
@@ -132,20 +130,20 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Calls/{callSid}/Recordings.json");
 
             // Mark obligatory parameters
-            Require.Argument("Record", record);
+            //Require.Argument("Record", record);
 
             // Add RecordCall query and body parameters
             this.SetParamsForRecordCall(request, record, direction, timeLimit, callbackUrl, fileFormat, trimSilence,
                 transcribe, transcribeQuality, transcribeCallback);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Recording>(response);
+            return this.ReturnOrThrowException<Recording>(response.Result);
         }
 
         /// <summary>
@@ -189,13 +187,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/Recordings/{recordingSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Recording>(response);
+            return this.ReturnOrThrowException<Recording>(response.Result);
         }
 
         /// <summary>
@@ -220,10 +218,10 @@ namespace AvayaCPaaS.Connectors
         /// <param name="dateCreatedLt">The date created lt.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListRecordings(IRestRequest request, string callSid, DateTime dateCreatedGte,
+        private void SetParamsForListRecordings(RestRequest request, string callSid, DateTime dateCreatedGte,
             DateTime dateCreatedLt, int? page, int? pageSize)
         {
-            if (callSid.HasValue()) request.AddQueryParameter("CallSid", callSid);
+            if (string.IsNullOrEmpty(callSid)) request.AddQueryParameter("CallSid", callSid);
             if (dateCreatedGte != default(DateTime))
                 request.AddQueryParameter("DateCreated>", dateCreatedGte.ToString("yyyy-MM-dd"));
             if (dateCreatedLt != default(DateTime))
@@ -245,19 +243,19 @@ namespace AvayaCPaaS.Connectors
         /// <param name="transcribe">if set to <c>true</c> [transcribe].</param>
         /// <param name="transcribeQuality">The transcribe quality.</param>
         /// <param name="transcribeCallback">The transcribe callback.</param>
-        private void SetParamsForRecordCall(IRestRequest request, bool record, RecordingAudioDirection direction,
+        private void SetParamsForRecordCall(RestRequest request, bool record, RecordingAudioDirection direction,
             int? timeLimit, string callbackUrl, RecordingFileFormat fileFormat, bool trimSilence, bool transcribe,
             TranscribeQuality transcribeQuality, string transcribeCallback)
         {
             request.AddParameter("Record", record);
             request.AddParameter("Direction", EnumHelper.GetEnumValue(direction));
-            if (timeLimit != null) request.AddParameter("TimeLimit", timeLimit);
-            if (callbackUrl.HasValue()) request.AddParameter("CallbackUrl", callbackUrl);
+            if (timeLimit != null) request.AddParameter("TimeLimit", timeLimit.ToString());
+            if (string.IsNullOrEmpty(callbackUrl)) request.AddParameter("CallbackUrl", callbackUrl);
             request.AddParameter("FileFormat", EnumHelper.GetEnumValue(fileFormat));
             request.AddParameter("TrimSilence", trimSilence);
             request.AddParameter("Transcribe", transcribe);
             request.AddParameter("TranscribeQuality", EnumHelper.GetEnumValue(transcribeQuality));
-            if (transcribeCallback.HasValue()) request.AddParameter("TranscribeCallback", transcribeCallback);
+            if (string.IsNullOrEmpty(transcribeCallback)) request.AddParameter("TranscribeCallback", transcribeCallback);
         }
     }
 }

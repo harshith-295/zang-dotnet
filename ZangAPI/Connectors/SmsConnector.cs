@@ -1,12 +1,12 @@
 ﻿using System;
 using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
 using AvayaCPaaS.Model.Enums;
 using AvayaCPaaS.Model.Lists;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace AvayaCPaaS.Connectors
 {
@@ -31,19 +31,50 @@ namespace AvayaCPaaS.Connectors
         /// <param name="accountSid">The account sid.</param>
         /// <param name="smsMessageSid">SMS message SID.</param>
         /// <returns>Returns sms message</returns>
-        public SmsMessage ViewSmsMessage(string accountSid, string smsMessageSid)
+        //public SmsMessage ViewSmsMessage(string accountSid, string smsMessageSid)
+        //{
+        //    // Get client to make request
+        //    var client = HttpProvider.GetHttpClient();
+
+        //    // Create GET request
+        //    var request = RestRequestHelper.CreateRestRequest(Method.Get,
+        //        $"Accounts/{accountSid}/SMS/Messages/{smsMessageSid}.json");
+
+        //    // Send request
+        //    var response = client.ExecuteAsync(request);
+
+        //    return this.ReturnOrThrowException<SmsMessage>(response.Result);
+        //}
+
+        /// <summary>
+        /// Shows info on SMS message
+        /// </summary>
+        /// <param name="accountSid">The account sid.</param>
+        /// <param name="smsMessageSid">SMS message SID.</param>
+        /// <returns>Returns response containing error code (if any) and sms message</returns>
+        public ResponseAll ViewSmsMessage(string accountSid, string smsMessageSid)
         {
             // Get client to make request
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SMS/Messages/{smsMessageSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<SmsMessage>(response);
+            ResponseAll responseAll = new ResponseAll();
+            if (response.Result.StatusCode == HttpStatusCode.OK)
+            {
+                responseAll.SmsMessageObj = JsonConvert.DeserializeObject<SmsMessage>(response.Result.Content);
+            }
+            else
+            {
+                responseAll.ErrorCode = ((RestResponseBase)(object)response).Content;
+            }
+
+            return responseAll;
         }
 
         /// <summary>
@@ -51,7 +82,20 @@ namespace AvayaCPaaS.Connectors
         /// </summary>
         /// <param name="smsMessageSid">SMS message SID.</param>
         /// <returns>Returns sms message</returns>
-        public SmsMessage ViewSmsMessage(string smsMessageSid)
+        //public SmsMessage ViewSmsMessage(string smsMessageSid)
+        //{
+        //    // Get account sid from configuration
+        //    var accountSid = HttpProvider.GetConfiguration().AccountSid;
+
+        //    return this.ViewSmsMessage(accountSid, smsMessageSid);
+        //}
+
+        /// <summary>
+        /// Shows info on SMS message. Uses {accountSid} from configuration in HttpProvider
+        /// </summary>
+        /// <param name="smsMessageSid">SMS message SID.</param>
+        /// <returns>Returns response containing error code (if any) and sms message</returns>
+        public ResponseAll ViewSmsMessage(string smsMessageSid)
         {
             // Get account sid from configuration
             var accountSid = HttpProvider.GetConfiguration().AccountSid;
@@ -78,15 +122,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/SMS/Messages.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/SMS/Messages.json");
 
             // Add ListSmsMessages query and body parameters
             this.SetParamsForListSmsMessages(request, to, from, dateSentGte, dateSentLt, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<SmsMessagesList>(response);
+            return this.ReturnOrThrowException<SmsMessagesList>(response.Result);
         }
 
         /// <summary>
@@ -120,26 +164,69 @@ namespace AvayaCPaaS.Connectors
         /// <param name="statusCallbackMethod">The HTTP method used to request the StatusCallback. Valid parameters are GET and POST.</param>
         /// <param name="allowMultiple">If the Body length is greater than 160 characters, the SMS will be sent as a multi-part SMS. Allowed values are True or False.</param>
         /// <returns>Returns created sms message</returns>
-        public SmsMessage SendSms(string accountSid, string to, string body, string from = null,
+        //public SmsMessage SendSms(string accountSid, string to, string body, string from = null,
+        //    string statusCallback = null, HttpMethod statusCallbackMethod = HttpMethod.POST, bool allowMultiple = false)
+        //{
+        //    // Get client to make request
+        //    var client = HttpProvider.GetHttpClient();
+
+        //    // Create POST request
+        //    var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/SMS/Messages.json");
+
+        //    // Mark obligatory parameters
+        //    //Require.Argument("To", to);
+        //    //Require.Argument("Body", body);
+
+        //    // Add SendSms query and body parameters
+        //    this.SetParamsForSendSms(request, to, body, from, statusCallback, statusCallbackMethod, allowMultiple);
+
+        //    // Send request
+        //    var response = client.ExecuteAsync(request);
+
+        //    return this.ReturnOrThrowException<SmsMessage>(response.Result);
+        //}
+
+        /// <summary>
+        /// Sends SMS message
+        /// </summary>
+        /// <param name="accountSid">The account sid.</param>
+        /// <param name="to">Must be an SMS capable number. The value does not have to be in any specific format.</param>
+        /// <param name="body">Text of the SMS to be sent.</param>
+        /// <param name="from">Must be a Avaya CPaaS number associated with your account. The value does not have to be in any specific format.</param>
+        /// <param name="statusCallback">The URL that will be sent information about the SMS.Url length is limited to 200 characters.</param>
+        /// <param name="statusCallbackMethod">The HTTP method used to request the StatusCallback. Valid parameters are GET and POST.</param>
+        /// <param name="allowMultiple">If the Body length is greater than 160 characters, the SMS will be sent as a multi-part SMS. Allowed values are True or False.</param>
+        /// <returns>Returns response containing error code (if any) and created sms message</returns>
+        public ResponseAll SendSms(string accountSid, string to, string body, string from = null,
             string statusCallback = null, HttpMethod statusCallbackMethod = HttpMethod.POST, bool allowMultiple = false)
         {
             // Get client to make request
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/SMS/Messages.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/SMS/Messages.json");
 
             // Mark obligatory parameters
-            Require.Argument("To", to);
-            Require.Argument("Body", body);
+            //Require.Argument("To", to);
+            //Require.Argument("Body", body);
 
             // Add SendSms query and body parameters
             this.SetParamsForSendSms(request, to, body, from, statusCallback, statusCallbackMethod, allowMultiple);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<SmsMessage>(response);
+            ResponseAll responseAll = new ResponseAll();
+            if (response.Result.StatusCode == HttpStatusCode.OK)
+            {
+                responseAll.SmsMessageObj = JsonConvert.DeserializeObject<SmsMessage>(response.Result.Content);
+            }
+            else
+            {
+                responseAll.ErrorCode = ((RestResponseBase)(object)response).Content;
+            }
+
+            return responseAll;
         }
 
         /// <summary>
@@ -152,7 +239,26 @@ namespace AvayaCPaaS.Connectors
         /// <param name="statusCallbackMethod">The HTTP method used to request the StatusCallback. Valid parameters are GET and POST.</param>
         /// <param name="allowMultiple">If the Body length is greater than 160 characters, the SMS will be sent as a multi-part SMS. Allowed values are True or False.</param>
         /// <returns>Returns created sms message</returns>
-        public SmsMessage SendSms(string to, string body, string from = null,
+        //public SmsMessage SendSms(string to, string body, string from = null,
+        //    string statusCallback = null, HttpMethod statusCallbackMethod = HttpMethod.POST, bool allowMultiple = false)
+        //{
+        //    // Get account sid from configuration
+        //    var accountSid = HttpProvider.GetConfiguration().AccountSid;
+
+        //    return this.SendSms(accountSid, to, body, from, statusCallback, statusCallbackMethod, allowMultiple);
+        //}
+
+        /// <summary>
+        /// Sends SMS message. Uses {accountSid} from configuration in HttpProvider
+        /// </summary>
+        /// <param name="to">Must be an SMS capable number. The value does not have to be in any specific format.</param>
+        /// <param name="body">Text of the SMS to be sent.</param>
+        /// <param name="from">Must be a Avaya CPaaS number associated with your account. The value does not have to be in any specific format.</param>
+        /// <param name="statusCallback">The URL that will be sent information about the SMS.Url length is limited to 200 characters.</param>
+        /// <param name="statusCallbackMethod">The HTTP method used to request the StatusCallback. Valid parameters are GET and POST.</param>
+        /// <param name="allowMultiple">If the Body length is greater than 160 characters, the SMS will be sent as a multi-part SMS. Allowed values are True or False.</param>
+        /// <returns>Returns response containing error code (if any) and created sms message</returns>
+        public ResponseAll SendSms(string to, string body, string from = null,
             string statusCallback = null, HttpMethod statusCallbackMethod = HttpMethod.POST, bool allowMultiple = false)
         {
             // Get account sid from configuration
@@ -171,14 +277,14 @@ namespace AvayaCPaaS.Connectors
         /// <param name="statusCallback">The status callback.</param>
         /// <param name="statusCallbackMethod">The status callback method.</param>
         /// <param name="allowMultiple">if set to <c>true</c> [allow multiple].</param>
-        private void SetParamsForSendSms(IRestRequest request, string to, string body, string from,
+        private void SetParamsForSendSms(RestRequest request, string to, string body, string from,
             string statusCallback, HttpMethod statusCallbackMethod, bool allowMultiple)
         {
             request.AddParameter("To", to);
             request.AddParameter("Body", body);
 
-            if (from.HasValue()) request.AddParameter("From", from);
-            if (statusCallback.HasValue()) request.AddParameter("StatusCallback", statusCallback);
+            if (string.IsNullOrEmpty(from)) request.AddParameter("From", from);
+            if (string.IsNullOrEmpty(statusCallback)) request.AddParameter("StatusCallback", statusCallback);
             request.AddParameter("StatusCallbackMethod", statusCallbackMethod.ToString().ToUpper());
             request.AddParameter("AllowMultiple", allowMultiple);
         }
@@ -193,11 +299,11 @@ namespace AvayaCPaaS.Connectors
         /// <param name="dateSentLt">The date sent lt.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListSmsMessages(IRestRequest request, string to, string from, DateTime dateSentGte,
+        private void SetParamsForListSmsMessages(RestRequest request, string to, string from, DateTime dateSentGte,
             DateTime dateSentLt, int? page, int? pageSize)
         {
-            if (to.HasValue()) request.AddQueryParameter("To", to);
-            if (from.HasValue()) request.AddQueryParameter("From", from);
+            if (string.IsNullOrEmpty(to)) request.AddQueryParameter("To", to);
+            if (string.IsNullOrEmpty(from)) request.AddQueryParameter("From", from);
             if (dateSentGte != default(DateTime))
                 request.AddQueryParameter("DateSent>", dateSentGte.ToString("yyyy-MM-dd"));
             if (dateSentLt != default(DateTime))

@@ -36,13 +36,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Conference>(response);
+            return this.ReturnOrThrowException<Conference>(response.Result);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Conferences.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Conferences.json");
 
             // Add ListConferences query and body parameters
             this.SetParamsForListConferences(request, friendlyName, status, dateCreatedGte, dateCreatedLt,
@@ -89,9 +89,9 @@ namespace AvayaCPaaS.Connectors
                 page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<ConferencesList>(response);
+            return this.ReturnOrThrowException<ConferencesList>(response.Result);
         }
 
         /// <summary>
@@ -132,13 +132,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}/Participants/{participantSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Participant>(response);
+            return this.ReturnOrThrowException<Participant>(response.Result);
         }
 
         /// <summary>
@@ -172,16 +172,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}/Participants.json");
 
             // Add ListParticipants query and body parameters
             this.SetParamsForListParticipants(request, muted, deaf, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<ParticipantsList>(response);
+            return this.ReturnOrThrowException<ParticipantsList>(response.Result);
         }
 
         /// <summary>
@@ -218,16 +218,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}/Participants/{participantSid}.json");
 
             // Add MuteOrDeafParticipant query and body parameters
             this.SetParamsForMuteOrDeafParticipant(request, muted, deaf);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Participant>(response);
+            return this.ReturnOrThrowException<Participant>(response.Result);
         }
 
         /// <summary>
@@ -262,16 +262,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}/Participants/{participantSid}/Play.json");
 
             // Add body parameter
-            if (audioUrl.HasValue()) request.AddParameter("AudioUrl", audioUrl);
+            if (string.IsNullOrEmpty(audioUrl)) request.AddParameter("AudioUrl", audioUrl);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Participant>(response);
+            return this.ReturnOrThrowException<Participant>(response.Result);
         }
 
         /// <summary>
@@ -302,13 +302,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/Conferences/{conferenceSid}/Participants/{participantSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Participant>(response);
+            return this.ReturnOrThrowException<Participant>(response.Result);
         }
 
         /// <summary>
@@ -337,11 +337,11 @@ namespace AvayaCPaaS.Connectors
         /// <param name="dateUpdatedLt">The date updated lt.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListConferences(IRestRequest request, string friendlyName, ConferenceStatus? status,
+        private void SetParamsForListConferences(RestRequest request, string friendlyName, ConferenceStatus? status,
             DateTime dateCreatedGte, DateTime dateCreatedLt, DateTime dateUpdatedGte, DateTime dateUpdatedLt,
             int? page, int? pageSize)
         {
-            if (friendlyName.HasValue()) request.AddQueryParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddQueryParameter("FriendlyName", friendlyName);
             if (status != null) request.AddQueryParameter("Status", EnumHelper.GetEnumValue(status));
             if (dateCreatedGte != default(DateTime))
                 request.AddQueryParameter("DateCreated>", dateCreatedGte.ToString("yyyy-MM-dd"));
@@ -363,7 +363,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="deaf">if set to <c>true</c> [deaf].</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListParticipants(IRestRequest request, bool muted, bool deaf, int? page, int? pageSize)
+        private void SetParamsForListParticipants(RestRequest request, bool muted, bool deaf, int? page, int? pageSize)
         {
             request.AddQueryParameter("Muted", muted.ToString());
             request.AddQueryParameter("Deaf", deaf.ToString());
@@ -377,7 +377,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="muted">if set to <c>true</c> [muted].</param>
         /// <param name="deaf">if set to <c>true</c> [deaf].</param>
-        private void SetParamsForMuteOrDeafParticipant(IRestRequest request, bool muted, bool deaf)
+        private void SetParamsForMuteOrDeafParticipant(RestRequest request, bool muted, bool deaf)
         {
             request.AddParameter("Muted", muted.ToString());
             request.AddParameter("Deaf", deaf.ToString());

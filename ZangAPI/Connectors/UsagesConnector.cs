@@ -34,13 +34,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Usages/{usageSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Usage>(response);
+            return this.ReturnOrThrowException<Usage>(response.Result);
         }
 
         /// <summary>
@@ -74,15 +74,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Usages.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Usages.json");
 
             // Add ListUsages query and body parameters
             this.SetParamsForListUsages(request, day, month, year, product, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<UsagesList>(response);
+            return this.ReturnOrThrowException<UsagesList>(response.Result);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="product">The product.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListUsages(IRestRequest request, int? day, int? month, int? year, Product? product,
+        private void SetParamsForListUsages(RestRequest request, int? day, int? month, int? year, Product? product,
             int? page, int? pageSize)
         {
             if (day != null) request.AddQueryParameter("Day", day.ToString());

@@ -34,13 +34,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Notifications/{notificationSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Notification>(response);
+            return this.ReturnOrThrowException<Notification>(response.Result);
         }
 
         /// <summary>
@@ -71,15 +71,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Notifications.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Notifications.json");
 
             // Add ListNotifications query and body parameters
             this.SetParamsForListNotifications(request, log, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<NotificationsList>(response);
+            return this.ReturnOrThrowException<NotificationsList>(response.Result);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="log">The log.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListNotifications(IRestRequest request, Log? log, int? page, int? pageSize)
+        private void SetParamsForListNotifications(RestRequest request, Log? log, int? page, int? pageSize)
         {
             if (log != null) request.AddQueryParameter("Log", ((int) log.Value).ToString());
             if (page != null) request.AddQueryParameter("Page", page.ToString());

@@ -1,5 +1,4 @@
 ﻿using RestSharp;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -34,15 +33,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Lookups/Carrier.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Lookups/Carrier.json");
 
             // Add CarrierLookup query and body parameters
             request.AddParameter("PhoneNumber", phoneNumber);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var lookups = this.ReturnOrThrowException<CarrierLookups>(response);
+            var lookups = this.ReturnOrThrowException<CarrierLookups>(response.Result);
 
             return lookups != null && lookups.LookupArray != null && lookups.LookupArray.Length > 0 ? lookups.LookupArray[0] : null;
         }
@@ -73,15 +72,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Lookups/Carrier.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Lookups/Carrier.json");
 
             // Add CarrierLookupList query and body parameters
             this.SetParamsForListLookups(request, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CarrierLookupsList>(response);
+            return this.ReturnOrThrowException<CarrierLookupsList>(response.Result);
         }
 
         /// <summary>
@@ -110,16 +109,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Lookups/Cnam.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Lookups/Cnam.json");
 
             // Set CnamLookup body parameter
-            Require.Argument("PhoneNumber", phoneNumber);
+            //Require.Argument("PhoneNumber", phoneNumber);
             request.AddParameter("PhoneNumber", phoneNumber);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var lookups = this.ReturnOrThrowException<CnamLookups>(response);
+            var lookups = this.ReturnOrThrowException<CnamLookups>(response.Result);
 
             return lookups != null && lookups.LookupArray != null && lookups.LookupArray.Length > 0 ? lookups.LookupArray[0] : null;
         }
@@ -150,15 +149,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Lookups/Cnam.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Lookups/Cnam.json");
 
             // Add CnamLookupList query and body parameters
             this.SetParamsForListLookups(request, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CnamLookupsList>(response);
+            return this.ReturnOrThrowException<CnamLookupsList>(response.Result);
         }
 
         /// <summary> 
@@ -187,16 +186,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Lookups/Bna.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Lookups/Bna.json");
 
             // Set BnaLookup body parameter
-            Require.Argument("PhoneNumber", phoneNumber);
+            //Require.Argument("PhoneNumber", phoneNumber);
             request.AddParameter("PhoneNumber", phoneNumber);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var lookups = this.ReturnOrThrowException<BnaLookups>(response);
+            var lookups = this.ReturnOrThrowException<BnaLookups>(response.Result);
 
             return lookups != null && lookups.LookupArray != null && lookups.LookupArray.Length > 0 ? lookups.LookupArray[0] : null;
         }
@@ -227,15 +226,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Lookups/Bna.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Lookups/Bna.json");
 
             // Add BnaLookupList query and body parameters
             this.SetParamsForListLookups(request, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<BnaLookupsList>(response);
+            return this.ReturnOrThrowException<BnaLookupsList>(response.Result);
         }
 
         /// <summary>
@@ -258,7 +257,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListLookups(IRestRequest request, int? page, int? pageSize)
+        private void SetParamsForListLookups(RestRequest request, int? page, int? pageSize)
         {
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());

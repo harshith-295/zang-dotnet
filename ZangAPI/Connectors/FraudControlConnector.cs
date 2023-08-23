@@ -39,16 +39,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Fraud/Block/{countryCode}.json");
 
             // Add BlockDestination query and body parameters
             this.SetParamsForBlockOrAuthorizeDestination(request, mobileEnabled, landlineEnabled, smsEnabled);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response);
+            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response.Result);
 
             // If blocked part of a fraud control rule element is null return null
             if (fraudControlRuleElement.Blocked == null)
@@ -96,16 +96,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Fraud/Authorize/{countryCode}.json");
 
             // Add AuthorizeDestination query and body parameters
             this.SetParamsForBlockOrAuthorizeDestination(request, mobileEnabled, landlineEnabled, smsEnabled);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response);
+            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response.Result);
 
             // If authorized part of a fraud control rule element is null return null
             if (fraudControlRuleElement.Authorized == null)
@@ -149,13 +149,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/Fraud/Extend/{countryCode}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response);
+            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response.Result);
 
             // If authorized part of a fraud control rule element is null return null
             if (fraudControlRuleElement.Authorized == null)
@@ -199,16 +199,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Fraud/Whitelist/{countryCode}.json");
 
             // Add WhitelistDestination query and body parameters
             this.SetParamsForWhitelistDestination(request, mobileEnabled, landlineEnabled, smsEnabled);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response);
+            var fraudControlRuleElement = this.ReturnOrThrowException<FraudControlRuleElement>(response.Result);
 
             // If whitelisted part of a fraud control rule element is null return null
             if (fraudControlRuleElement.Whitelisted == null)
@@ -254,15 +254,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Fraud.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Fraud.json");
 
             // Add ListFraudControlResources query and body parameters
             this.SetParamsForListFraudControlResources(request, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            var fraudControlRules = this.ReturnOrThrowException<FraudControlRulesList>(response);
+            var fraudControlRules = this.ReturnOrThrowException<FraudControlRulesList>(response.Result);
 
             // If fraud control rules are null return null
             if (fraudControlRules == null)
@@ -322,7 +322,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="mobileEnabled">if set to <c>true</c> [mobile enabled].</param>
         /// <param name="landlineEnabled">if set to <c>true</c> [landline enabled].</param>
         /// <param name="smsEnabled">if set to <c>true</c> [SMS enabled].</param>
-        private void SetParamsForBlockOrAuthorizeDestination(IRestRequest request, bool mobileEnabled,
+        private void SetParamsForBlockOrAuthorizeDestination(RestRequest request, bool mobileEnabled,
             bool landlineEnabled,
             bool smsEnabled)
         {
@@ -338,7 +338,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="mobileEnabled">if set to <c>true</c> [mobile enabled].</param>
         /// <param name="landlineEnabled">if set to <c>true</c> [landline enabled].</param>
         /// <param name="smsEnabled">if set to <c>true</c> [SMS enabled].</param>
-        private void SetParamsForWhitelistDestination(IRestRequest request, bool mobileEnabled, bool landlineEnabled,
+        private void SetParamsForWhitelistDestination(RestRequest request, bool mobileEnabled, bool landlineEnabled,
             bool smsEnabled)
         {
             request.AddQueryParameter("MobileEnabled", mobileEnabled.ToString());
@@ -352,7 +352,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListFraudControlResources(IRestRequest request, int? page, int? pageSize)
+        private void SetParamsForListFraudControlResources(RestRequest request, int? page, int? pageSize)
         {
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());

@@ -1,6 +1,4 @@
 ﻿using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -35,13 +33,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{ipAccessControlListSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -71,16 +69,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists.json");
 
             // Add ListApplications query and body parameters
             this.SetParamsForListIpAccessControlLists(request, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlListsList>(response);
+            return this.ReturnOrThrowException<IpAccessControlListsList>(response.Result);
         }
 
         /// <summary>
@@ -109,19 +107,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists.json");
 
             // Mark obligatory parameters
-            Require.Argument("FriendlyName", friendlyName);
+            //Require.Argument("FriendlyName", friendlyName);
 
             // Add CreateIpAccessControlList query and body parameters
             request.AddParameter("FriendlyName", friendlyName);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -151,19 +149,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{ipAccessControlListSid}.json");
 
             // Mark obligatory parameters
-            Require.Argument("FriendlyName", friendlyName);
+            //Require.Argument("FriendlyName", friendlyName);
 
             // Add UpdateIpAccessControlList query and body parameters
             request.AddParameter("FriendlyName", friendlyName);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -192,13 +190,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{ipAccessControlListSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -227,13 +225,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{aclSid}/IpAddresses/{ipSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAddress>(response);
+            return this.ReturnOrThrowException<IpAddress>(response.Result);
         }
 
         /// <summary>
@@ -262,13 +260,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{aclSid}/IpAddresses.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAddressesList>(response);
+            return this.ReturnOrThrowException<IpAddressesList>(response.Result);
         }
 
         /// <summary>
@@ -298,20 +296,20 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{aclSid}/IpAddresses.json");
 
             // Mark obligatory parameters
-            Require.Argument("FriendlyName", friendlyName);
-            Require.Argument("IpAddress", ipAddress);
+            //Require.Argument("FriendlyName", friendlyName);
+            //Require.Argument("IpAddress", ipAddress);
 
             // Add AddAccessControlListIp query and body parameters
             this.SetParamsForAddOrUpdateAccessControlListIp(request, friendlyName, ipAddress);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAddress>(response);
+            return this.ReturnOrThrowException<IpAddress>(response.Result);
         }
 
         /// <summary>
@@ -345,16 +343,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{aclSid}/IpAddresses/{ipSid}.json");
 
             // Add UpdateAccessControlListIp query and body parameters
             this.SetParamsForAddOrUpdateAccessControlListIp(request, friendlyName, ipAddress);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAddress>(response);
+            return this.ReturnOrThrowException<IpAddress>(response.Result);
         }
 
         /// <summary>
@@ -387,13 +385,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/IpAccessControlLists/{aclSid}/IpAddresses/{ipSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAddress>(response);
+            return this.ReturnOrThrowException<IpAddress>(response.Result);
         }
 
         /// <summary>
@@ -416,7 +414,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListIpAccessControlLists(IRestRequest request, int? page, int? pageSize)
+        private void SetParamsForListIpAccessControlLists(RestRequest request, int? page, int? pageSize)
         {
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());
@@ -428,11 +426,11 @@ namespace AvayaCPaaS.Connectors
         /// <param name="request">The request.</param>
         /// <param name="friendlyName">Name of the friendly.</param>
         /// <param name="ipAddress">The ip address.</param>
-        private void SetParamsForAddOrUpdateAccessControlListIp(IRestRequest request, string friendlyName,
+        private void SetParamsForAddOrUpdateAccessControlListIp(RestRequest request, string friendlyName,
             string ipAddress)
         {
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
-            if (ipAddress.HasValue()) request.AddParameter("IpAddress", ipAddress);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(ipAddress)) request.AddParameter("IpAddress", ipAddress);
         }
     }
 }

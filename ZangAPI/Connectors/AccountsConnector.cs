@@ -32,12 +32,12 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Account>(response);
+            return this.ReturnOrThrowException<Account>(response.Result);
         }
 
         /// <summary>
@@ -64,15 +64,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}.json");
 
             // Set body parameter
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Account>(response);
+            return this.ReturnOrThrowException<Account>(response.Result);
         }
 
         /// <summary>

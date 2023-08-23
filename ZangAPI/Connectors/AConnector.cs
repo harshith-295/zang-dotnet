@@ -33,7 +33,7 @@ namespace AvayaCPaaS.Connectors
         /// <typeparam name="T"></typeparam>
         /// <param name="response">The response.</param>
         /// <returns>Returns instance of class T or throws exception</returns>
-        public T ReturnOrThrowException<T>(IRestResponse response)
+        public T ReturnOrThrowException<T>(RestResponse response)
         {
             var status = (int)response.StatusCode;
 

@@ -35,13 +35,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/IncomingPhoneNumbers/{incomingNumberSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IncomingPhoneNumber>(response);
+            return this.ReturnOrThrowException<IncomingPhoneNumber>(response.Result);
         }
 
         /// <summary>
@@ -74,16 +74,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/IncomingPhoneNumbers.json");
 
             // Add ListIncomingNumbers query and body parameters
             this.SetParamsForListIncomingNumbers(request, contains, friendlyName, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IncomingPhoneNumbersList>(response);
+            return this.ReturnOrThrowException<IncomingPhoneNumbersList>(response.Result);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/IncomingPhoneNumbers.json");
 
             // Add PurchaseIncomingNumber query and body parameters
@@ -153,9 +153,9 @@ namespace AvayaCPaaS.Connectors
                 hangupCallback, hangupCallbackMethod, voiceApplicationSid, smsApplicationSid);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IncomingPhoneNumber>(response);
+            return this.ReturnOrThrowException<IncomingPhoneNumber>(response.Result);
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/IncomingPhoneNumbers/{incomingPhoneNumberSid}.json");
 
             // Add UpdateIncomingNumber query and body parameters
@@ -248,9 +248,9 @@ namespace AvayaCPaaS.Connectors
                 hangupCallback, hangupCallbackMethod);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IncomingPhoneNumber>(response);
+            return this.ReturnOrThrowException<IncomingPhoneNumber>(response.Result);
         }
 
         /// <summary>
@@ -305,13 +305,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/IncomingPhoneNumbers/{incomingPhoneNumberSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IncomingPhoneNumber>(response);
+            return this.ReturnOrThrowException<IncomingPhoneNumber>(response.Result);
         }
 
         /// <summary>
@@ -335,11 +335,11 @@ namespace AvayaCPaaS.Connectors
         /// <param name="friendlyName">Name of the friendly.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListIncomingNumbers(IRestRequest request, string contains, string friendlyName,
+        private void SetParamsForListIncomingNumbers(RestRequest request, string contains, string friendlyName,
             int? page, int? pageSize)
         {
-            if (contains.HasValue()) request.AddQueryParameter("Contains", contains);
-            if (friendlyName.HasValue()) request.AddQueryParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(contains)) request.AddQueryParameter("Contains", contains);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddQueryParameter("FriendlyName", friendlyName);
             if (page != null) request.AddQueryParameter("Page", page.ToString());
             if (pageSize != null) request.AddQueryParameter("PageSize", pageSize.ToString());
         }
@@ -368,7 +368,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="hangupCallbackMethod">The hangup callback method.</param>
         /// <param name="voiceApplicationSid">The voice application sid.</param>
         /// <param name="smsApplicationSid">The SMS application sid.</param>
-        private void SetParamsForPurchaseIncomingNumber(IRestRequest request, string phoneNumber, string areaCode,
+        private void SetParamsForPurchaseIncomingNumber(RestRequest request, string phoneNumber, string areaCode,
             string friendlyName, string voiceUrl, HttpMethod voiceMethod, string voiceFallbackUrl,
             HttpMethod voiceFallbackMethod,
             bool voiceCallerIdLookup, string smsUrl,
@@ -379,26 +379,26 @@ namespace AvayaCPaaS.Connectors
             string hangupCallback = null, HttpMethod hangupCallbackMethod = HttpMethod.POST,
             string voiceApplicationSid = null, string smsApplicationSid = null)
         {
-            if (phoneNumber.HasValue()) request.AddParameter("PhoneNumber", phoneNumber);
-            if (areaCode.HasValue()) request.AddParameter("AreaCode", areaCode);
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
-            if (voiceUrl.HasValue()) request.AddParameter("VoiceUrl", voiceUrl);
+            if (string.IsNullOrEmpty(phoneNumber)) request.AddParameter("PhoneNumber", phoneNumber);
+            if (string.IsNullOrEmpty(areaCode)) request.AddParameter("AreaCode", areaCode);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(voiceUrl)) request.AddParameter("VoiceUrl", voiceUrl);
             request.AddParameter("VoiceMethod", voiceMethod);
-            if (voiceFallbackUrl.HasValue()) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
+            if (string.IsNullOrEmpty(voiceFallbackUrl)) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
             request.AddParameter("VoiceFallbackMethod", voiceFallbackMethod);
             request.AddParameter("VoiceCallerIdLookup", voiceCallerIdLookup);
-            if (smsUrl.HasValue()) request.AddParameter("SmsUrl", smsUrl);
+            if (string.IsNullOrEmpty(smsUrl)) request.AddParameter("SmsUrl", smsUrl);
             request.AddParameter("SmsMethod", smsMethod);
-            if (smsFallbackUrl.HasValue()) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
+            if (string.IsNullOrEmpty(smsFallbackUrl)) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
             request.AddParameter("SmsFallbackMethod", smsFallbackMethod);
-            if (heartbeatUrl.HasValue()) request.AddParameter("HeartbeatUrl", heartbeatUrl);
+            if (string.IsNullOrEmpty(heartbeatUrl)) request.AddParameter("HeartbeatUrl", heartbeatUrl);
             request.AddParameter("HeartbeatMethod", heartbeatMethod);
-            if (statusCallback.HasValue()) request.AddParameter("StatusCallback", statusCallback);
+            if (string.IsNullOrEmpty(statusCallback)) request.AddParameter("StatusCallback", statusCallback);
             request.AddParameter("StatusCallbackMethod", statusCallbackMethod);
-            if (hangupCallback.HasValue()) request.AddParameter("HangupCallback", hangupCallback);
+            if (string.IsNullOrEmpty(hangupCallback)) request.AddParameter("HangupCallback", hangupCallback);
             request.AddParameter("HangupCallbackMethod", hangupCallbackMethod);
-            if (voiceApplicationSid.HasValue()) request.AddParameter("VoiceApplicationSid", voiceApplicationSid);
-            if (smsApplicationSid.HasValue()) request.AddParameter("SmsApplicationSid", smsApplicationSid);
+            if (string.IsNullOrEmpty(voiceApplicationSid)) request.AddParameter("VoiceApplicationSid", voiceApplicationSid);
+            if (string.IsNullOrEmpty(smsApplicationSid)) request.AddParameter("SmsApplicationSid", smsApplicationSid);
         }
 
         /// <summary>
@@ -421,7 +421,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="statusCallbackMethod">The status callback method.</param>
         /// <param name="hangupCallback">The hangup callback.</param>
         /// <param name="hangupCallbackMethod">The hangup callback method.</param>
-        private void SetParamsForUpdatingIncomingNumber(IRestRequest request, string friendlyName, string voiceUrl,
+        private void SetParamsForUpdatingIncomingNumber(RestRequest request, string friendlyName, string voiceUrl,
             HttpMethod voiceMethod, string voiceFallbackUrl, HttpMethod voiceFallbackMethod, bool voiceCallerIdLookup,
             string smsUrl, HttpMethod smsMethod = HttpMethod.POST, string smsFallbackUrl = null,
             HttpMethod smsFallbackMethod = HttpMethod.POST, string heartbeatUrl = null,
@@ -429,21 +429,21 @@ namespace AvayaCPaaS.Connectors
             string statusCallback = null, HttpMethod statusCallbackMethod = HttpMethod.POST,
             string hangupCallback = null, HttpMethod hangupCallbackMethod = HttpMethod.POST)
         {
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
-            if (voiceUrl.HasValue()) request.AddParameter("VoiceUrl", voiceUrl);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(voiceUrl)) request.AddParameter("VoiceUrl", voiceUrl);
             request.AddParameter("VoiceMethod", voiceMethod);
-            if (voiceFallbackUrl.HasValue()) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
+            if (string.IsNullOrEmpty(voiceFallbackUrl)) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
             request.AddParameter("VoiceFallbackMethod", voiceFallbackMethod);
             request.AddParameter("VoiceCallerIdLookup", voiceCallerIdLookup);
-            if (smsUrl.HasValue()) request.AddParameter("SmsUrl", smsUrl);
+            if (string.IsNullOrEmpty(smsUrl)) request.AddParameter("SmsUrl", smsUrl);
             request.AddParameter("SmsMethod", smsMethod);
-            if (smsFallbackUrl.HasValue()) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
+            if (string.IsNullOrEmpty(smsFallbackUrl)) request.AddParameter("SmsFallbackUrl", smsFallbackUrl);
             request.AddParameter("SmsFallbackMethod", smsFallbackMethod);
-            if (heartbeatUrl.HasValue()) request.AddParameter("HeartbeatUrl", heartbeatUrl);
+            if (string.IsNullOrEmpty(heartbeatUrl)) request.AddParameter("HeartbeatUrl", heartbeatUrl);
             request.AddParameter("HeartbeatMethod", heartbeatMethod);
-            if (statusCallback.HasValue()) request.AddParameter("StatusCallback", statusCallback);
+            if (string.IsNullOrEmpty(statusCallback)) request.AddParameter("StatusCallback", statusCallback);
             request.AddParameter("StatusCallbackMethod", statusCallbackMethod);
-            if (hangupCallback.HasValue()) request.AddParameter("HangupCallback", hangupCallback);
+            if (string.IsNullOrEmpty(hangupCallback)) request.AddParameter("HangupCallback", hangupCallback);
             request.AddParameter("HangupCallbackMethod", hangupCallbackMethod);
         }
     }

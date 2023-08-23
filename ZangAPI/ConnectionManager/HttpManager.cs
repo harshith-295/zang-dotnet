@@ -19,7 +19,7 @@ namespace AvayaCPaaS.ConnectionManager
         /// The rest client.
         /// </value>
         private RestClient RestClient { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the API configuration.
         /// </summary>
@@ -42,10 +42,7 @@ namespace AvayaCPaaS.ConnectionManager
         /// <returns></returns>
         private IRestClient InitHttpClient()
         {
-            var client = new RestClient();
-
-            this.ConfigureRestClient(client);
-
+            RestClient client = this.ConfigureRestClient();
             this.RestClient = client;
             return client;
         }
@@ -62,7 +59,7 @@ namespace AvayaCPaaS.ConnectionManager
             if (this.RestClient == null)
             {
                 return this.InitHttpClient();
-            }              
+            }
 
             return this.RestClient;
         }
@@ -76,7 +73,7 @@ namespace AvayaCPaaS.ConnectionManager
             if (this.RestClient != null)
             {
                 this.DisposeHttpClient();
-            }               
+            }
 
             return this.InitHttpClient();
         }
@@ -103,8 +100,8 @@ namespace AvayaCPaaS.ConnectionManager
             }
             else
             {
-                this.ConfigureRestClient(this.RestClient);
-            }                    
+                this.RestClient = this.ConfigureRestClient();
+            }
         }
 
         /// <summary>
@@ -122,10 +119,12 @@ namespace AvayaCPaaS.ConnectionManager
         /// Configures the rest client.
         /// </summary>
         /// <param name="client">The client.</param>
-        private void ConfigureRestClient(IRestClient client)
+        private RestClient ConfigureRestClient()
         {
-            client.BaseUrl = new Uri(APIConfiguration.BaseUrl);
-            client.Authenticator = new HttpBasicAuthenticator(APIConfiguration.AccountSid, APIConfiguration.AuthToken);
+            RestClientOptions options = new RestClientOptions(new Uri(APIConfiguration.BaseUrl))
+            {
+                Authenticator = new HttpBasicAuthenticator(APIConfiguration.AccountSid, APIConfiguration.AuthToken)
+            };
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
                                                    | SecurityProtocolType.Tls11
@@ -135,9 +134,11 @@ namespace AvayaCPaaS.ConnectionManager
             // If useProxy flag is set to true set proxy
             if (APIConfiguration.UseProxy)
             {
-                client.Proxy = new WebProxy(APIConfiguration.ProxyHost + ":" + APIConfiguration.ProxyPort);
-                client.Proxy.Credentials = new NetworkCredential(APIConfiguration.AccountSid, APIConfiguration.AuthToken);
+                options.Proxy = new WebProxy(APIConfiguration.ProxyHost + ":" + APIConfiguration.ProxyPort);
+                options.Proxy.Credentials = new NetworkCredential(APIConfiguration.AccountSid, APIConfiguration.AuthToken);
             }
+
+            return new RestClient(options);
         }
     }
 }

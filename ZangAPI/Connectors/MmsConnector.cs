@@ -1,7 +1,5 @@
 ﻿using System;
 using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -40,19 +38,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/MMS/Messages.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/MMS/Messages.json");
 
             // Mark obligatory parameters
-            Require.Argument("To", to);
-            Require.Argument("MediaUrl", mediaUrl);
+            //Require.Argument("To", to);
+            //Require.Argument("MediaUrl", mediaUrl);
 
             // Add SendMms query and body parameters
             this.SetParamsForSendMms(request, to, mediaUrl, body, from, statusCallback);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<MmsMessage>(response);
+            return this.ReturnOrThrowException<MmsMessage>(response.Result);
         }
 
         /// <summary>
@@ -82,15 +80,15 @@ namespace AvayaCPaaS.Connectors
         /// <param name="from">From.</param>
         /// <param name="statusCallback">The status callback.</param>
         /// <param name="mediaUrl">URL of an image to be sent in the message.</param>
-        private void SetParamsForSendMms(IRestRequest request, string to, string mediaUrl, string body, string from,
+        private void SetParamsForSendMms(RestRequest request, string to, string mediaUrl, string body, string from,
             string statusCallback)
         {
             request.AddParameter("To", to);
             request.AddParameter("MediaUrl", mediaUrl);
 
-            if (body.HasValue()) request.AddParameter("Body", body);
-            if (from.HasValue()) request.AddParameter("From", from);
-            if (statusCallback.HasValue()) request.AddParameter("StatusCallback", statusCallback);
+            if (string.IsNullOrEmpty(body)) request.AddParameter("Body", body);
+            if (string.IsNullOrEmpty(from)) request.AddParameter("From", from);
+            if (string.IsNullOrEmpty(statusCallback)) request.AddParameter("StatusCallback", statusCallback);
         }
 
     }

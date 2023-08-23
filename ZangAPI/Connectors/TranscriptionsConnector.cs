@@ -36,13 +36,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/Transcriptions/{transcriptionSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Transcription>(response);
+            return this.ReturnOrThrowException<Transcription>(response.Result);
         }
 
         /// <summary>
@@ -76,15 +76,15 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/Transcriptions.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/Transcriptions.json");
 
             // Add ListTranscriptions query and body parameters
             this.SetParamsForListTranscriptions(request, status, dateTranscribedGte, dateTranscribedLt, page, pageSize);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<TranscriptionsList>(response);
+            return this.ReturnOrThrowException<TranscriptionsList>(response.Result);
         }
 
         /// <summary>
@@ -125,16 +125,16 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Transcriptions.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Transcriptions.json");
 
             // Add TranscribeRecording query and body parameters
             this.SetParamsForTranscribeRecordingOrAudioUrl(request, transcribeCallback, callbackMethod, sliceStart,
                 sliceDuration, quality);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Transcription>(response);
+            return this.ReturnOrThrowException<Transcription>(response.Result);
         }
 
         /// <summary>
@@ -177,18 +177,18 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/Transcriptions.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/Transcriptions.json");
 
-            if (audioUrl.HasValue()) request.AddParameter("AudioUrl", audioUrl);
+            if (string.IsNullOrEmpty(audioUrl)) request.AddParameter("AudioUrl", audioUrl);
 
             // Add TranscribeAudioUrl query and body parameters
             this.SetParamsForTranscribeRecordingOrAudioUrl(request, transcribeCallback, callbackMethod, sliceStart,
                 sliceDuration, quality);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Transcription>(response);
+            return this.ReturnOrThrowException<Transcription>(response.Result);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace AvayaCPaaS.Connectors
         /// <param name="dateTranscribedLt">The date transcribed lt.</param>
         /// <param name="page">The page.</param>
         /// <param name="pageSize">Size of the page.</param>
-        private void SetParamsForListTranscriptions(IRestRequest request, TranscriptionStatus? status,
+        private void SetParamsForListTranscriptions(RestRequest request, TranscriptionStatus? status,
             DateTime dateTranscribedGte, DateTime dateTranscribedLt, int? page, int? pageSize)
         {
             if (status != null)
@@ -243,14 +243,14 @@ namespace AvayaCPaaS.Connectors
         /// <param name="sliceStart">The slice start.</param>
         /// <param name="sliceDuration">Duration of the slice.</param>
         /// <param name="quality">The quality.</param>
-        private void SetParamsForTranscribeRecordingOrAudioUrl(IRestRequest request, string transcribeCallback,
+        private void SetParamsForTranscribeRecordingOrAudioUrl(RestRequest request, string transcribeCallback,
             HttpMethod callbackMethod, int? sliceStart,
             int? sliceDuration, TranscribeQuality quality)
         {
-            if (transcribeCallback.HasValue()) request.AddParameter("TranscribeCallback", transcribeCallback);
+            if (string.IsNullOrEmpty(transcribeCallback)) request.AddParameter("TranscribeCallback", transcribeCallback);
             request.AddParameter("CallbackMethod", callbackMethod);
             if (sliceStart != null) request.AddParameter("SliceStart", sliceStart.ToString());
-            if (sliceDuration != null) request.AddParameter("SliceDuration", sliceDuration);
+            if (sliceDuration != null) request.AddParameter("SliceDuration", sliceDuration.ToString());
             request.AddParameter("Quality", EnumHelper.GetEnumValue(quality));
         }
     }

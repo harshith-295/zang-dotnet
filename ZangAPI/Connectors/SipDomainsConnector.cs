@@ -1,6 +1,4 @@
 ﻿using RestSharp;
-using RestSharp.Extensions;
-using RestSharp.Validation;
 using AvayaCPaaS.ConnectionManager;
 using AvayaCPaaS.Helpers;
 using AvayaCPaaS.Model;
@@ -36,13 +34,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Domain>(response);
+            return this.ReturnOrThrowException<Domain>(response.Result);
         }
 
         /// <summary>
@@ -69,12 +67,12 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET, $"Accounts/{accountSid}/SIP/Domains.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Get, $"Accounts/{accountSid}/SIP/Domains.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<DomainsList>(response);
+            return this.ReturnOrThrowException<DomainsList>(response.Result);
         }
 
         /// <summary>
@@ -114,10 +112,10 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST, $"Accounts/{accountSid}/SIP/Domains.json");
+            var request = RestRequestHelper.CreateRestRequest(Method.Post, $"Accounts/{accountSid}/SIP/Domains.json");
 
             // Mark obligatory parameters
-            Require.Argument("DomainName", domainName);
+            //Require.Argument("DomainName", domainName);
 
             // Add CreateDomain query and body parameters
             request.AddParameter("DomainName", domainName);
@@ -127,9 +125,9 @@ namespace AvayaCPaaS.Connectors
                 hearbeatMethod, voiceStatusCallback, voiceStatusCallbackMethod);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Domain>(response);
+            return this.ReturnOrThrowException<Domain>(response.Result);
         }
 
         /// <summary>
@@ -185,7 +183,7 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}.json");
 
             // Add UpdateDomain query and body parameters
@@ -194,9 +192,9 @@ namespace AvayaCPaaS.Connectors
                 hearbeatMethod, voiceStatusCallback, voiceStatusCallbackMethod);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Domain>(response);
+            return this.ReturnOrThrowException<Domain>(response.Result);
         }
 
         /// <summary>
@@ -239,13 +237,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<Domain>(response);
+            return this.ReturnOrThrowException<Domain>(response.Result);
         }
 
         /// <summary> 
@@ -274,19 +272,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/CredentialListMappings.json");
 
             // Mark obligatory parameters
-            Require.Argument("CredentialListSid", credentialListSid);
+            //Require.Argument("CredentialListSid", credentialListSid);
 
             // Add MapCredentialsList query and body parameters
             request.AddParameter("CredentialListSid", credentialListSid);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -315,13 +313,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/CredentialListMappings.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialListsList>(response);
+            return this.ReturnOrThrowException<CredentialListsList>(response.Result);
         }
 
         /// <summary>
@@ -350,13 +348,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/CredentialListMappings/{clSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<CredentialList>(response);
+            return this.ReturnOrThrowException<CredentialList>(response.Result);
         }
 
         /// <summary>
@@ -387,19 +385,19 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create POST request
-            var request = RestRequestHelper.CreateRestRequest(Method.POST,
+            var request = RestRequestHelper.CreateRestRequest(Method.Post,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/IpAccessControlListMappings.json");
 
             // Mark obligatory parameters
-            Require.Argument("IpAccessControlListSid", ipAccessControlListSid);
+            //Require.Argument("IpAccessControlListSid", ipAccessControlListSid);
 
             // Add MapIPAccessControlList query and body parameters
             request.AddParameter("IpAccessControlListSid", ipAccessControlListSid);
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -428,13 +426,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create GET request
-            var request = RestRequestHelper.CreateRestRequest(Method.GET,
+            var request = RestRequestHelper.CreateRestRequest(Method.Get,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/IpAccessControlListMappings.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlListsList>(response);
+            return this.ReturnOrThrowException<IpAccessControlListsList>(response.Result);
         }
 
         /// <summary>
@@ -463,13 +461,13 @@ namespace AvayaCPaaS.Connectors
             var client = HttpProvider.GetHttpClient();
 
             // Create DELETE request
-            var request = RestRequestHelper.CreateRestRequest(Method.DELETE,
+            var request = RestRequestHelper.CreateRestRequest(Method.Delete,
                 $"Accounts/{accountSid}/SIP/Domains/{domainSid}/IpAccessControlListMappings/{alSid}.json");
 
             // Send request
-            var response = client.Execute(request);
+            var response = client.ExecuteAsync(request);
 
-            return this.ReturnOrThrowException<IpAccessControlList>(response);
+            return this.ReturnOrThrowException<IpAccessControlList>(response.Result);
         }
 
         /// <summary>
@@ -499,18 +497,18 @@ namespace AvayaCPaaS.Connectors
         /// <param name="hearbeatMethod">The hearbeat method.</param>
         /// <param name="voiceStatusCallback">The voice status callback.</param>
         /// <param name="voiceStatusCallbackMethod">The voice status callback method.</param>
-        private void SetParamsForCreateOrUpdateDomain(IRestRequest request, string friendlyName, string voiceUrl,
+        private void SetParamsForCreateOrUpdateDomain(RestRequest request, string friendlyName, string voiceUrl,
             HttpMethod voiceMethod, string voiceFallbackUrl, HttpMethod voiceFallbackMethod, string hearbeatUrl,
             HttpMethod hearbeatMethod, string voiceStatusCallback, HttpMethod voiceStatusCallbackMethod)
         {
-            if (friendlyName.HasValue()) request.AddParameter("FriendlyName", friendlyName);
-            if (voiceUrl.HasValue()) request.AddParameter("VoiceUrl", voiceUrl);
+            if (string.IsNullOrEmpty(friendlyName)) request.AddParameter("FriendlyName", friendlyName);
+            if (string.IsNullOrEmpty(voiceUrl)) request.AddParameter("VoiceUrl", voiceUrl);
             request.AddParameter("VoiceMethod", voiceMethod.ToString().ToUpper());
-            if (voiceFallbackUrl.HasValue()) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
+            if (string.IsNullOrEmpty(voiceFallbackUrl)) request.AddParameter("VoiceFallbackUrl", voiceFallbackUrl);
             request.AddParameter("VoiceFallbackMethod", voiceFallbackMethod.ToString().ToUpper());
-            if (hearbeatUrl.HasValue()) request.AddParameter("HeartbeatUrl", hearbeatUrl);
+            if (string.IsNullOrEmpty(hearbeatUrl)) request.AddParameter("HeartbeatUrl", hearbeatUrl);
             request.AddParameter("HeartbeatMethod", hearbeatMethod.ToString().ToUpper());
-            if (voiceStatusCallback.HasValue()) request.AddParameter("VoiceStatusCallback", voiceStatusCallback);
+            if (string.IsNullOrEmpty(voiceStatusCallback)) request.AddParameter("VoiceStatusCallback", voiceStatusCallback);
             request.AddParameter("VoiceStatusCallbackMethod", voiceStatusCallbackMethod.ToString().ToUpper());
         }
     }
