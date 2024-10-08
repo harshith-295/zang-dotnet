@@ -62,12 +62,12 @@ namespace AvayaCPaaS.Tests.ConnectorsTests
                     jsonRequest.BodyParameter("Body"), jsonRequest.BodyParameter("From"),
                     jsonRequest.BodyParameter("StatusCallback"), HttpMethod.GET);
 
-                Assert.AreEqual(jsonRequest.BodyParameter("To"), message.To);
-                Assert.AreEqual(jsonRequest.BodyParameter("Body"), message.Body);
-                Assert.AreEqual(jsonRequest.BodyParameter("From"), message.From);
-                Assert.AreEqual(SmsStatus.SENT, message.Status);
-                Assert.AreEqual(SmsDirection.OUTBOUND_API, message.Direction);
-                Assert.AreEqual(Convert.ToDecimal(0.0616), message.Price);
+                Assert.AreEqual(jsonRequest.BodyParameter("To"), message.SmsMessageObj.To);
+                Assert.AreEqual(jsonRequest.BodyParameter("Body"), message.SmsMessageObj.Body);
+                Assert.AreEqual(jsonRequest.BodyParameter("From"), message.SmsMessageObj.From);
+                Assert.AreEqual(SmsStatus.SENT, message.SmsMessageObj.Status);
+                Assert.AreEqual(SmsDirection.OUTBOUND_API, message.SmsMessageObj.Direction);
+                Assert.AreEqual(Convert.ToDecimal(0.0616), message.SmsMessageObj.Price);
             }
         }
 
@@ -108,9 +108,9 @@ namespace AvayaCPaaS.Tests.ConnectorsTests
                 // View sms using sms connector
                 var message = service.SmsConnector.ViewSmsMessage("TestSmsSid");
 
-                Assert.AreEqual(SmsStatus.SENT, message.Status);
-                Assert.AreEqual(SmsDirection.OUTBOUND_API, message.Direction);
-                Assert.AreEqual(Convert.ToDecimal(0.0616), message.Price);
+                Assert.AreEqual(SmsStatus.SENT, message.SmsMessageObj.Status);
+                Assert.AreEqual(SmsDirection.OUTBOUND_API, message.SmsMessageObj.Direction);
+                Assert.AreEqual(Convert.ToDecimal(0.0616), message.SmsMessageObj.Price);
             }
         }
 

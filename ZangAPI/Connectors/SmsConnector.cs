@@ -71,7 +71,7 @@ namespace AvayaCPaaS.Connectors
             }
             else
             {
-                responseAll.ErrorCode = ((RestResponseBase)(object)response).Content;
+                responseAll.ErrorCode = response.Result.Content;
             }
 
             return responseAll;
@@ -223,7 +223,7 @@ namespace AvayaCPaaS.Connectors
             }
             else
             {
-                responseAll.ErrorCode = ((RestResponseBase)(object)response).Content;
+                responseAll.ErrorCode = response.Result.Content;
             }
 
             return responseAll;

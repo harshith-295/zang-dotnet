@@ -24,7 +24,7 @@ namespace AvayaCPaaS.Examples.Examples
             {
                 // Send sms message using sms connector
                 var smsMessage = service.SmsConnector.SendSms("+123", "This is an SMS message", from:"456");
-                Console.WriteLine(smsMessage.Body);
+                Console.WriteLine(smsMessage.SmsMessageObj.Body);
             }
             catch (CPaaSException e)
             {
@@ -41,7 +41,7 @@ namespace AvayaCPaaS.Examples.Examples
             {
                 // View sms message using sms connector
                 var smsMessage = service.SmsConnector.ViewSmsMessage("SmsMessageSid");
-                Console.WriteLine(smsMessage.Body);
+                Console.WriteLine(smsMessage.SmsMessageObj.Body);
             }
             catch (CPaaSException e)
             {
